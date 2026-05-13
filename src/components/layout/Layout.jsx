@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, CreditCard, PieChart, MessageSquare, LogOut, ChevronDown, X } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { AIAssistant } from '../AIAssistant';
 
 export const Layout = () => {
   const { data, parentChildren, activeChild, currentParent, language, t, switchChild, toggleLanguage, logout } = useAppContext();
@@ -127,6 +128,10 @@ export const Layout = () => {
           </Link>
         ))}
       </nav>
+
+      {/* AI Assistant */}
+      <AIAssistant />
     </div>
   );
 };
+

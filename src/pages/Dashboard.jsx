@@ -57,7 +57,7 @@ export const Dashboard = () => {
       <h2 className="section-title">{t.activityFeed}</h2>
       <div className="activity-list">
         {activeChild.schoolwork.map(sw => (
-          <div key={sw.id} className="activity-item">
+          <div key={sw.id} className="activity-item" style={{ cursor: 'pointer' }} onClick={() => navigate('/progress')}>
             <div className="activity-icon">
               <Upload size={20} />
             </div>
@@ -68,7 +68,7 @@ export const Dashboard = () => {
           </div>
         ))}
         {data.announcements.map(ann => (
-          <div key={ann.id} className="activity-item">
+          <div key={ann.id} className="activity-item" style={{ cursor: 'pointer' }} onClick={() => navigate('/messages')}>
             <div className="activity-icon" style={{ background: '#FEF3C7', color: '#D97706' }}>
               <Bell size={20} />
             </div>
