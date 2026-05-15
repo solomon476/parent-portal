@@ -1,51 +1,55 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { mockData, translations } from '../data/mockData';
+import { api } from '../lib/api';
 
 const AppContext = createContext();
 
-import { api } from '../lib/api';
-
 export const AppProvider = ({ children }) => {
-  const [data, setData] = useState(mockData);
-  const [activeChildId, setActiveChildId] = useState(mockData.children[0].id);
-  const [language, setLanguage] = useState('en');
-  const [currentParent, setCurrentParent] = useState(() => {
-    const saved = localStorage.getItem('eduportal_parent');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [currentParent, setCurrentParent] = useState(null);
+  const [parentChildren, setParentChildren] = useState([]);
+  const [activeChildId, setActiveChildId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [language, setLanguage] = useState('en');
 
-  const isAuthenticated = !!currentParent;
+  const token = localStorage.getItem('parent_token');
+  const isAuthenticated = !!token;
 
-  // Filter children to only those belonging to the logged-in parent
-  const parentChildren = isAuthenticated
-    ? data.children.filter(c => currentParent.childIds?.includes(c.id))
-    : [];
-
-  const activeChild = parentChildren.find(c => c.id === activeChildId) || parentChildren[0];
+  const fetchParentData = async () => {
+    if (!token) return;
+    setIsLoading(true);
+    try {
+      const { profile } = await api.get('/parent/me');
+      const { students } = await api.get('/parent/students');
+      
+      setCurrentParent(profile);
+      setParentChildren(students);
+      if (students.length > 0 && !activeChildId) {
+        setActiveChildId(students[0].id);
+      }
+    } catch (err) {
+      console.error('Failed to fetch parent data:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // When parent logs in, default to their first child
-    if (currentParent && parentChildren.length > 0) {
-      setActiveChildId(parentChildren[0].id);
+    if (isAuthenticated) {
+      fetchParentData();
+    } else {
+      setCurrentParent(null);
+      setParentChildren([]);
     }
-  }, [currentParent?.id]);
+  }, [isAuthenticated]);
 
-  const t = translations[language];
+  const activeChild = parentChildren.find(c => c.id === activeChildId) || parentChildren[0];
 
   const login = async (email, password) => {
     setLoginError('');
     try {
       const result = await api.post('/auth/login', { email, password });
-      
-      const parent = {
-        ...result.user,
-        childIds: mockData.children.map(c => c.id) // Still using mock child IDs for now
-      };
-      
       localStorage.setItem('parent_token', result.token);
-      localStorage.setItem('eduportal_parent', JSON.stringify(parent));
-      setCurrentParent(parent);
+      await fetchParentData();
       return true;
     } catch (error) {
       setLoginError(error.message || 'Login failed. Please check your credentials.');
@@ -55,63 +59,32 @@ export const AppProvider = ({ children }) => {
 
   const logout = () => {
     setCurrentParent(null);
-    localStorage.removeItem('eduportal_parent');
+    setParentChildren([]);
     localStorage.removeItem('parent_token');
   };
 
   const switchChild = (id) => setActiveChildId(id);
   const toggleLanguage = () => setLanguage(prev => prev === 'en' ? 'sw' : 'en');
 
-  const addPayment = (childId, amount, method) => {
-    setData(prev => {
-      const newData = { ...prev, children: prev.children.map(c => ({ ...c })) };
-      const childIndex = newData.children.findIndex(c => c.id === childId);
-      if (childIndex !== -1) {
-        newData.children[childIndex] = {
-          ...newData.children[childIndex],
-          fees: {
-            ...newData.children[childIndex].fees,
-            history: [
-              {
-                id: `tx-${Date.now()}`,
-                date: new Date().toISOString().split('T')[0],
-                amount: Number(amount),
-                ref: `${method.toUpperCase()}-${Math.floor(Math.random() * 90000 + 10000)}`,
-                status: 'Successful'
-              },
-              ...newData.children[childIndex].fees.history
-            ],
-            totalBalance: Math.max(0, newData.children[childIndex].fees.totalBalance - Number(amount))
-          }
-        };
-      }
-      return newData;
-    });
-  };
-
   const markMessageRead = (msgId) => {
-    setData(prev => ({
-      ...prev,
-      messages: prev.messages.map(m => m.id === msgId ? { ...m, read: true } : m)
-    }));
+    // Logic for marking messages read can be added here
   };
 
   return (
     <AppContext.Provider value={{
-      data,
       activeChild,
       parentChildren,
       currentParent,
       language,
-      t,
       isAuthenticated,
+      isLoading,
       loginError,
       login,
       logout,
       switchChild,
       toggleLanguage,
-      addPayment,
-      markMessageRead
+      markMessageRead,
+      refreshData: fetchParentData
     }}>
       {children}
     </AppContext.Provider>
