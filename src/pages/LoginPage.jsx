@@ -13,16 +13,15 @@ export const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [touched, setTouched] = useState({ email: false, password: false });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setTouched({ email: true, password: true });
     if (!email || !password) return;
     setIsLoading(true);
-    setTimeout(() => {
-      const success = login(email, password);
-      setIsLoading(false);
-      if (success) navigate('/');
-    }, 1000);
+    
+    const success = await login(email, password);
+    setIsLoading(false);
+    if (success) navigate('/');
   };
 
 

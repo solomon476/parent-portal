@@ -3,12 +3,14 @@ import { mockData, translations } from '../data/mockData';
 
 const AppContext = createContext();
 
+import { api } from '../lib/api';
+
 export const AppProvider = ({ children }) => {
   const [data, setData] = useState(mockData);
   const [activeChildId, setActiveChildId] = useState(mockData.children[0].id);
   const [language, setLanguage] = useState('en');
   const [currentParent, setCurrentParent] = useState(() => {
-    const saved = sessionStorage.getItem('eduportal_parent');
+    const saved = localStorage.getItem('eduportal_parent');
     return saved ? JSON.parse(saved) : null;
   });
   const [loginError, setLoginError] = useState('');
@@ -17,7 +19,7 @@ export const AppProvider = ({ children }) => {
 
   // Filter children to only those belonging to the logged-in parent
   const parentChildren = isAuthenticated
-    ? data.children.filter(c => currentParent.childIds.includes(c.id))
+    ? data.children.filter(c => currentParent.childIds?.includes(c.id))
     : [];
 
   const activeChild = parentChildren.find(c => c.id === activeChildId) || parentChildren[0];
@@ -31,37 +33,30 @@ export const AppProvider = ({ children }) => {
 
   const t = translations[language];
 
-  const login = (email, password) => {
+  const login = async (email, password) => {
     setLoginError('');
-    // Basic validation: need a valid email format and password of at least 4 characters
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setLoginError('Please enter a valid email address.');
+    try {
+      const result = await api.post('/auth/login', { email, password });
+      
+      const parent = {
+        ...result.user,
+        childIds: mockData.children.map(c => c.id) // Still using mock child IDs for now
+      };
+      
+      localStorage.setItem('parent_token', result.token);
+      localStorage.setItem('eduportal_parent', JSON.stringify(parent));
+      setCurrentParent(parent);
+      return true;
+    } catch (error) {
+      setLoginError(error.message || 'Login failed. Please check your credentials.');
       return false;
     }
-    if (password.length < 4) {
-      setLoginError('Password must be at least 4 characters.');
-      return false;
-    }
-    // Build initials from the email username
-    const username = email.split('@')[0];
-    const initials = username.slice(0, 2).toUpperCase();
-    const parent = {
-      id: 'parent-session',
-      name: username.charAt(0).toUpperCase() + username.slice(1),
-      email: email,
-      phone: '',
-      avatar: initials,
-      childIds: mockData.children.map(c => c.id)
-    };
-    setCurrentParent(parent);
-    sessionStorage.setItem('eduportal_parent', JSON.stringify(parent));
-    return true;
   };
 
   const logout = () => {
     setCurrentParent(null);
-    sessionStorage.removeItem('eduportal_parent');
+    localStorage.removeItem('eduportal_parent');
+    localStorage.removeItem('parent_token');
   };
 
   const switchChild = (id) => setActiveChildId(id);
