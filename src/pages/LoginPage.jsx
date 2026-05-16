@@ -46,7 +46,7 @@ export const LoginPage = () => {
           <div className="login-logo">
             <GraduationCap size={32} />
           </div>
-          <h1 className="login-title">EduPortal</h1>
+          <h1 className="login-title">Somobloom</h1>
           <p className="login-subtitle">Parent Access Portal</p>
           <p className="login-tagline">Sign in to monitor your child's learning journey</p>
         </div>

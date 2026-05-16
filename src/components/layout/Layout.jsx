@@ -31,7 +31,7 @@ export const Layout = () => {
       {/* Top Nav */}
       <header className="top-nav">
         <h1 className="app-brand">
-          EduPortal
+          Somobloom
         </h1>
         <div className="nav-actions">
           <button className="lang-switch" onClick={toggleLanguage}>
