@@ -4,6 +4,7 @@ import { Home, CreditCard, PieChart, MessageSquare, LogOut, ChevronDown, X } fro
 import { useAppContext } from '../../context/AppContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AIAssistant } from '../AIAssistant';
+import SomoBloomLogo from './SomoBloomLogo';
 
 export const Layout = () => {
   const { data, parentChildren, activeChild, currentParent, language, t, switchChild, toggleLanguage, logout } = useAppContext();
@@ -30,9 +31,9 @@ export const Layout = () => {
     <div className="app-container">
       {/* Top Nav */}
       <header className="top-nav">
-        <h1 className="app-brand">
-          Somobloom
-        </h1>
+        <div className="app-brand" style={{ display: 'flex', alignItems: 'center' }}>
+          <SomoBloomLogo size={28} fontSize="15px" />
+        </div>
         <div className="nav-actions">
           <button className="lang-switch" onClick={toggleLanguage}>
             {language === 'en' ? 'SW' : 'EN'}

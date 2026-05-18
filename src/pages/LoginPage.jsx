@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, LogIn, GraduationCap, AlertCircle } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { motion } from 'framer-motion';
+import SomoBloomLogo from '../components/layout/SomoBloomLogo';
 
 export const LoginPage = () => {
   const { login, loginError } = useAppContext();
@@ -42,9 +43,9 @@ export const LoginPage = () => {
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         {/* Header */}
-        <div className="login-header">
-          <div className="login-logo">
-            <GraduationCap size={32} />
+        <div className="login-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+            <SomoBloomLogo size={64} showText={false} />
           </div>
           <h1 className="login-title">Somobloom</h1>
           <p className="login-subtitle">Parent Access Portal</p>
