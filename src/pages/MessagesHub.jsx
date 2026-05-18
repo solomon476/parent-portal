@@ -4,7 +4,7 @@ import { Mail, Bell, Calendar, Send, Check, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const MessagesHub = () => {
-  const { data, t, markMessageRead } = useAppContext();
+  const { data, t, markMessageRead, sendMessage, activeChild } = useAppContext();
   const [activeTab, setActiveTab] = useState('inbox');
   const [selectedMsg, setSelectedMsg] = useState(null);
   const [replySent, setReplySent] = useState(false);
@@ -12,28 +12,57 @@ export const MessagesHub = () => {
   const [meetingDate, setMeetingDate] = useState('');
   const [meetingStatus, setMeetingStatus] = useState('idle'); // idle | loading | success
 
-  const handleReply = (e) => {
+  const handleReply = async (e) => {
     e.preventDefault();
     if (!replyValue) return;
+
+    // Use quick reply label mapping
+    const quickReplies = {
+      received: 'Message received, thank you.',
+      working: 'We will work on this at home.',
+      meeting: "I'd like to schedule a meeting to discuss.",
+      acknowledged: "Acknowledged. We'll follow up."
+    };
+    const replyText = quickReplies[replyValue] || replyValue;
+
+    const recipientId = selectedMsg.senderId;
     setReplySent(true);
-    setTimeout(() => {
-      setSelectedMsg(null);
+
+    const success = await sendMessage(recipientId, replyText, `Re: ${selectedMsg.subject || 'Direct Message'}`);
+    if (success) {
+      setTimeout(() => {
+        setSelectedMsg(null);
+        setReplySent(false);
+        setReplyValue('');
+      }, 2000);
+    } else {
       setReplySent(false);
-      setReplyValue('');
-    }, 2000);
+    }
   };
 
-  const handleRequestSlot = (e) => {
+  const handleRequestSlot = async (e) => {
     e.preventDefault();
     if (!meetingDate) return;
+
+    if (!activeChild || !activeChild.teacherUserId) {
+      alert('No teacher assigned to this child yet.');
+      return;
+    }
+
     setMeetingStatus('loading');
-    setTimeout(() => {
+
+    const messageText = `Hello ${activeChild.teacherName || 'Teacher'}, I would like to request a parent-teacher meeting regarding ${activeChild.name} on ${meetingDate}. Please let me know if this slot is convenient for you.`;
+
+    const success = await sendMessage(activeChild.teacherUserId, messageText, 'Parent-Teacher Meeting Request');
+    if (success) {
       setMeetingStatus('success');
       setTimeout(() => {
         setMeetingStatus('idle');
         setMeetingDate('');
       }, 3000);
-    }, 1200);
+    } else {
+      setMeetingStatus('idle');
+    }
   };
 
   return (
