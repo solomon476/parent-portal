@@ -3,7 +3,6 @@ export const mockParents = [
     id: "parent-1",
     name: "Mrs. Wanjiku Kamau",
     email: "wanjiku@somobloom.com",
-    password: "parent123",
     phone: "+254 712 345 678",
     avatar: "WK",
     childIds: ["child-1", "child-2"]
@@ -12,7 +11,6 @@ export const mockParents = [
     id: "parent-2",
     name: "Mr. James Odhiambo",
     email: "james@somobloom.com",
-    password: "james2026",
     phone: "+254 722 987 654",
     avatar: "JO",
     childIds: ["child-1"]
