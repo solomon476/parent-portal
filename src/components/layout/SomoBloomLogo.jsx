@@ -1,4 +1,4 @@
-export default function SomoBloomLogo({ size = 40, showText = true }) {
+export default function SomoBloomLogo({ size = 40, showText = true, fontSize = '18px' }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', userSelect: 'none' }}>
       <svg
@@ -74,7 +74,7 @@ export default function SomoBloomLogo({ size = 40, showText = true }) {
       
       {showText && (
         <span style={{
-          fontSize: '18px',
+          fontSize: fontSize,
           fontWeight: '800',
           letterSpacing: '-0.03em',
           color: 'inherit',

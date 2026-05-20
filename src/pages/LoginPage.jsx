@@ -47,7 +47,7 @@ export const LoginPage = () => {
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
             <SomoBloomLogo size={64} showText={false} />
           </div>
-          <h1 className="login-title">Somobloom</h1>
+          <h1 className="login-title">SomoBloom</h1>
           <p className="login-subtitle">Parent Access Portal</p>
           <p className="login-tagline">Sign in to monitor your child's learning journey</p>
           
@@ -156,7 +156,7 @@ export const LoginPage = () => {
 
 
         <p className="login-footer">
-          Somobloom School Management System &copy; 2026
+          SomoBloom School Management System &copy; 2026
         </p>
       </motion.div>
     </div>

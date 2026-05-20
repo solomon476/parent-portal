@@ -73,7 +73,7 @@ export const AppProvider = ({ children }) => {
           phone: '+254712345678'
         });
         setParentChildren([
-          { id: 's-1', name: 'Sarah Smith', grade: 'Grade 4 Science', school: 'Somobloom Elementary School' }
+          { id: 's-1', name: 'Sarah Smith', grade: 'Grade 4 Science', school: 'SomoBloom Elementary School' }
         ]);
         setActiveChildId('s-1');
         return true;
@@ -93,7 +93,7 @@ export const AppProvider = ({ children }) => {
         phone: '+254712345678'
       });
       setParentChildren([
-        { id: 's-1', name: 'Sarah Smith', grade: 'Grade 4 Science', school: 'Somobloom Elementary School' }
+        { id: 's-1', name: 'Sarah Smith', grade: 'Grade 4 Science', school: 'SomoBloom Elementary School' }
       ]);
       setActiveChildId('s-1');
       return true;
