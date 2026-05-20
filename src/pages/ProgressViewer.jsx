@@ -108,9 +108,19 @@ export const ProgressViewer = () => {
                 </button>
               </div>
 
-              <div style={{ background: 'var(--bg-color)', height: '200px', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', border: '1px solid var(--border-color)' }}>
-                {selectedWork.type === 'image' ? <ImageIcon size={64} color="var(--text-muted)" /> : <FileText size={64} color="var(--text-muted)" />}
-                <span style={{ marginLeft: '1rem', color: 'var(--text-muted)' }}>Preview Not Available</span>
+              <div style={{ background: 'var(--bg-color)', height: '250px', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
+                {selectedWork.imageUrl ? (
+                  <img 
+                    src={selectedWork.imageUrl.startsWith('/') ? `http://localhost:8787${selectedWork.imageUrl}` : selectedWork.imageUrl} 
+                    alt={selectedWork.title} 
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  />
+                ) : (
+                  <>
+                    {selectedWork.type === 'image' ? <ImageIcon size={64} color="var(--text-muted)" /> : <FileText size={64} color="var(--text-muted)" />}
+                    <span style={{ marginLeft: '1rem', color: 'var(--text-muted)' }}>Preview Not Available</span>
+                  </>
+                )}
               </div>
 
               <div style={{ marginBottom: '1.5rem' }}>

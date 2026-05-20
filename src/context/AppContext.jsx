@@ -24,8 +24,31 @@ export const AppProvider = ({ children }) => {
       const { profile } = await api.get('/parent/me');
       const { students } = await api.get('/parent/students');
       
+      const enrichedStudents = await Promise.all((students || []).map(async (student) => {
+        let portfolio = [];
+        try {
+          const res = await api.get(`/parent/students/${student.id}/portfolio`);
+          portfolio = res.portfolio || [];
+        } catch (err) {
+          console.warn(`Failed to fetch portfolio for student ${student.id}:`, err);
+        }
+        
+        return {
+          ...student,
+          schoolwork: portfolio.map(item => ({
+            id: item.id,
+            title: item.title,
+            type: item.type === 'Assignment' ? 'pdf' : 'image',
+            date: item.createdAt.split('T')[0],
+            skill: item.tags && item.tags.length > 0 ? (item.tags[0] === 'EE' ? 'Exemplary' : item.tags[0] === 'ME' ? 'Proficient' : item.tags[0] === 'AE' ? 'Developing' : 'Beginning') : 'Proficient',
+            feedback: item.description || 'No feedback yet.',
+            imageUrl: item.imageUrl
+          }))
+        };
+      }));
+
       setCurrentParent(profile);
-      setParentChildren(students);
+      setParentChildren(enrichedStudents);
       if (students.length > 0 && !activeChildId) {
         setActiveChildId(students[0].id);
       }
