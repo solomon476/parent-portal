@@ -50,6 +50,31 @@ export const LoginPage = () => {
           <h1 className="login-title">Somobloom</h1>
           <p className="login-subtitle">Parent Access Portal</p>
           <p className="login-tagline">Sign in to monitor your child's learning journey</p>
+          
+          <div 
+            onClick={() => { setEmail('parent@somobloom.com'); setPassword('demo'); }}
+            style={{
+              marginTop: '12px',
+              padding: '8px 16px',
+              background: 'rgba(79, 70, 229, 0.15)',
+              border: '1px solid rgba(79, 70, 229, 0.3)',
+              color: '#c7d2fe',
+              fontSize: '11px',
+              fontWeight: 600,
+              borderRadius: '20px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              userSelect: 'none'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(79, 70, 229, 0.25)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(79, 70, 229, 0.15)'; }}
+          >
+            <span style={{ width: '6px', height: '6px', background: '#818cf8', borderRadius: '50%', display: 'inline-block' }} />
+            <span>Quick-fill Demo Credentials</span>
+          </div>
         </div>
 
         {/* Error Banner */}
