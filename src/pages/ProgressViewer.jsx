@@ -111,7 +111,7 @@ export const ProgressViewer = () => {
               <div style={{ background: 'var(--bg-color)', height: '250px', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
                 {selectedWork.imageUrl ? (
                   <img 
-                    src={selectedWork.imageUrl.startsWith('/') ? `http://localhost:8787${selectedWork.imageUrl}` : selectedWork.imageUrl} 
+                    src={selectedWork.imageUrl.startsWith('/') ? `${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:8787'}${selectedWork.imageUrl}` : selectedWork.imageUrl} 
                     alt={selectedWork.title} 
                     style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                   />
