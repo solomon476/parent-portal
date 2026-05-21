@@ -92,21 +92,21 @@ export const LoginPage = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="login-form">
           <div className="login-field">
-            <label htmlFor="email" className="login-label">Email Address</label>
+            <label htmlFor="email" className="login-label">Email or Phone Number</label>
             <div className={`login-input-wrap ${touched.email && !email ? 'has-error' : ''}`}>
               <Mail size={18} className="field-icon" />
               <input
                 id="email"
-                type="email"
+                type="text"
                 className="login-input"
-                placeholder="Your email address"
+                placeholder="Your email or phone number"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 onBlur={() => setTouched(t => ({ ...t, email: true }))}
                 autoComplete="email"
               />
             </div>
-            {touched.email && !email && <span className="field-error">Email is required</span>}
+            {touched.email && !email && <span className="field-error">Email or Phone Number is required</span>}
           </div>
 
           <div className="login-field">
