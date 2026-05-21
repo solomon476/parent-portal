@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { api } from '../lib/api';
-import { mockData, translations } from '../data/mockData';
+import { translations } from '../data/translations';
 
 const AppContext = createContext();
 
@@ -8,7 +8,7 @@ export const AppProvider = ({ children }) => {
   const [currentParent, setCurrentParent] = useState(null);
   const [parentChildren, setParentChildren] = useState([]);
   const [activeChildId, setActiveChildId] = useState(null);
-  const [data, setData] = useState(mockData);
+  const [data, setData] = useState({ messages: [], announcements: [] });
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [language, setLanguage] = useState('en');
@@ -77,7 +77,7 @@ export const AppProvider = ({ children }) => {
     } else {
       setCurrentParent(null);
       setParentChildren([]);
-      setData(mockData);
+      setData({ messages: [], announcements: [] });
     }
   }, [isAuthenticated, fetchParentData]);
 
@@ -87,46 +87,21 @@ export const AppProvider = ({ children }) => {
   const login = async (email, password) => {
     setLoginError('');
     try {
-      if (email === 'parent@somobloom.com' || email === 'demo@somobloom.com') {
-        localStorage.setItem('parent_token', 'mock_parent_token');
-        setCurrentParent({
-          id: 'p-1',
-          name: 'David Smith',
-          email: 'parent@somobloom.com',
-          phone: '+254712345678'
-        });
-        setParentChildren([
-          { id: 's-1', name: 'Sarah Smith', grade: 'Grade 4 Science', school: 'SomoBloom Elementary School' }
-        ]);
-        setActiveChildId('s-1');
-        return true;
-      }
-
       const result = await api.post('/auth/login', { email, password });
       localStorage.setItem('parent_token', result.token);
       await fetchParentData();
       return true;
     } catch (error) {
-      console.warn('Real API failed, falling back to parent demo mode:', error);
-      localStorage.setItem('parent_token', 'mock_parent_token');
-      setCurrentParent({
-        id: 'p-1',
-        name: 'David Smith',
-        email: 'parent@somobloom.com',
-        phone: '+254712345678'
-      });
-      setParentChildren([
-        { id: 's-1', name: 'Sarah Smith', grade: 'Grade 4 Science', school: 'SomoBloom Elementary School' }
-      ]);
-      setActiveChildId('s-1');
-      return true;
+      console.error('Login failed:', error);
+      setLoginError(error.message || 'Invalid credentials');
+      return false;
     }
   };
 
   const logout = () => {
     setCurrentParent(null);
     setParentChildren([]);
-    setData(mockData);
+    setData({ messages: [], announcements: [] });
     localStorage.removeItem('parent_token');
   };
 
